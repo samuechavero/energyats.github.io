@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Energy ATS"
+version = "1.0.0"
+id = "artifacts/energy-ats"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26012
+
+[services.development]
+run = "pnpm --filter @workspace/energy-ats run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/energy-ats", "run", "build" ]
+publicDir = "artifacts/energy-ats/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26012"
+BASE_PATH = "/"
