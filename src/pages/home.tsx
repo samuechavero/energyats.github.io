@@ -15,6 +15,19 @@ const formSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
+async function sha256(message: string) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+declare global {
+  interface Window {
+    fbq: any;
+  }
+}
+
 export default function Home() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +69,28 @@ export default function Home() {
         console.error('Error inserting lead:', error);
         alert("Error submitting the form, please try again.");
       } else {
+        // Meta Pixel - Advanced Matching & Lead Event
+        try {
+          const emRaw = values.email.trim().toLowerCase();
+          const emHashed = await sha256(emRaw);
+          
+          const nameParts = values.name.trim().toLowerCase().split(' ');
+          const fn = nameParts[0] || '';
+          const ln = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+          
+          if (typeof window !== 'undefined' && window.fbq) {
+            window.fbq('init', '1454090999596042', {
+              em: emHashed,
+              fn: fn,
+              ln: ln,
+              external_id: emHashed
+            });
+            window.fbq('track', 'Lead');
+          }
+        } catch (pixelErr) {
+          console.error("Error firing pixel:", pixelErr);
+        }
+
         setIsUnlocked(true);
         window.scrollTo(0, 0);
       }
