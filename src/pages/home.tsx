@@ -6,6 +6,7 @@ import { Check, Download, ArrowRight, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "../supabaseClient";
 import CryptoJS from "crypto-js";
 // @ts-ignore
