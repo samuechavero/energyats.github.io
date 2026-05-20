@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "../supabaseClient";
+import CryptoJS from "crypto-js";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -15,11 +16,8 @@ const formSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
-async function sha256(message: string) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+function sha256(message: string) {
+  return CryptoJS.SHA256(message).toString(CryptoJS.enc.Hex);
 }
 
 declare global {
@@ -72,7 +70,7 @@ export default function Home() {
         // Meta Pixel - Advanced Matching & Lead Event
         try {
           const emRaw = values.email.trim().toLowerCase();
-          const emHashed = await sha256(emRaw);
+          const emHashed = sha256(emRaw);
           
           const nameParts = values.name.trim().toLowerCase().split(' ');
           const fn = nameParts[0] || '';
@@ -86,6 +84,8 @@ export default function Home() {
               external_id: emHashed
             });
             window.fbq('track', 'Lead');
+          } else {
+            console.warn("Meta Pixel (fbq) is not defined on window.");
           }
         } catch (pixelErr) {
           console.error("Error firing pixel:", pixelErr);
