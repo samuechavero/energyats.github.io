@@ -7,7 +7,7 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 const port = process.env.PORT ? Number(process.env.PORT) : 5000;
 
 export default defineConfig({
-  base: './',
+  base: '/energyats.github.io/',
   plugins: [
     react(),
     tailwindcss(),
