@@ -80,6 +80,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.0",
-    "crypto-js": "^4.2.0"
+    "crypto-js": "^4.2.0",
+    "react-facebook-pixel": "^1.0.4"
   }
 }
