@@ -4,8 +4,6 @@ import { useHashLocation } from "wouter/use-hash-location";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-// @ts-ignore
-import ReactPixel from "react-facebook-pixel";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 
@@ -15,12 +13,9 @@ function PixelTracker() {
   const [location] = useLocation();
 
   useEffect(() => {
-    const options = { autoConfig: true, debug: false };
-    ReactPixel.init('1454090999596042', {}, options);
-  }, []);
-
-  useEffect(() => {
-    ReactPixel.pageView();
+    if (typeof window !== "undefined" && window.fbq) {
+      window.fbq("track", "PageView");
+    }
   }, [location]);
 
   return null;

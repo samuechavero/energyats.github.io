@@ -9,8 +9,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "../supabaseClient";
 import CryptoJS from "crypto-js";
-// @ts-ignore
-import ReactPixel from "react-facebook-pixel";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -78,20 +76,24 @@ export default function Home() {
           const fn = nameParts[0] || '';
           const ln = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
           
-          // Re-init with Advanced Matching Data just before tracking the conversion
-          ReactPixel.init('1454090999596042', {
-            em: emHashed,
-            fn: fn,
-            ln: ln,
-            external_id: emHashed
-          });
-          
-          // Track high value conversion
-          ReactPixel.track('Lead', { 
-            content_name: 'Contacto_B2B_EnergyATS', 
-            currency: 'USD', 
-            value: 1000 
-          });
+          if (typeof window !== 'undefined' && window.fbq) {
+            // Re-init with Advanced Matching Data just before tracking the conversion
+            window.fbq('init', '1454090999596042', {
+              em: emHashed,
+              fn: fn,
+              ln: ln,
+              external_id: emHashed
+            });
+            
+            // Track high value conversion
+            window.fbq('track', 'Lead', { 
+              content_name: 'Contacto_B2B_EnergyATS', 
+              currency: 'USD', 
+              value: 1000 
+            });
+          } else {
+            console.warn("Meta Pixel (fbq) is not defined on window.");
+          }
         } catch (pixelErr) {
           console.error("Error firing pixel:", pixelErr);
         }
